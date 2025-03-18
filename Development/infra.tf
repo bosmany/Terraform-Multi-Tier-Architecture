@@ -1,5 +1,5 @@
 module "dev_vpc_1" {
-  source             = "../modules/network"
+  source             = "../Modules/network"
   vpc_cidr           = "10.90.0.0/16"
   vpc_name           = "dev_vpc_1"
   environment        = "Development"
@@ -10,7 +10,7 @@ module "dev_vpc_1" {
 }
 
 module "dev_natgw_1" {
-  source           = "../modules/nat"
+  source           = "../Modules/nat"
   public_subnet_id = module.dev_vpc_1.public_subnets_id_1
   vpc_name         = module.dev_vpc_1.vpc_name
 }
