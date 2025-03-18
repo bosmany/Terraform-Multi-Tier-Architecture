@@ -1,45 +1,33 @@
 module "dev_compute_1" {
   source      = "../modules/compute"
-  environment = module.dev_vpc_1.environment
-  amis = {
-    us-east-1 = "ami-04505e74c0741db8d"
-    us-east-2 = "ami-04505e74c0741db90"
-  }
-  aws_region           = var.aws_region
-  instance_type        = "t2.nano"
-  key_name             = "newer"
-  iam_instance_profile = module.dev_iam_1.instprofile
-  public_subnets       = module.dev_vpc_1.public_subnets_id
-  private_subnets      = module.dev_vpc_1.private_subnets_id
-  sg_id                = module.dev_sg_1.sg_id
-  vpc_name             = module.dev_vpc_1.vpc_name
-  elb_listener         = module.dev_elb_1.elb_listner
-  elb_listener_public  = module.dev_elb_1_public.elb_listner
+  ami               = var.ami
+  instance_type     = var.instance_type
+  instance_name     = var.instance_name
 }
 
 module "dev_elb_1" {
   source          = "../modules/elb"
-  environment     = module.dev_vpc_1.environment
-  nlbname         = "dev-nlb"
+  environment     = var.environment
+  nlbname         = var.nlbname
   subnets         = module.dev_vpc_1.public_subnets_id
-  tgname          = "dev-nlb-tg"
+  tgname          = var.tgname
   vpc_id          = module.dev_vpc_1.vpc_id
-  private_servers = module.dev_compute_1.private_servers
+  private_servers = [module.dev_compute_1.private_servers]
 }
 
 module "dev_elb_1_public" {
   source          = "../modules/elb"
-  environment     = module.dev_vpc_1.environment
-  nlbname         = "dev-nlb-public"
+  environment     = var.environment
+  nlbname         = var.nlbname_public
   subnets         = module.dev_vpc_1.public_subnets_id
-  tgname          = "dev-nlb-tg-public"
+  tgname          = var.tgname_public
   vpc_id          = module.dev_vpc_1.vpc_id
-  private_servers = module.dev_compute_1.public_servers
+  private_servers = [module.dev_compute_1.public_servers]
 }
 
 module "dev_iam_1" {
   source              = "../modules/iam"
-  environment         = module.dev_vpc_1.environment
-  rolename            = "BilalRole"
-  instanceprofilename = "Bilalprofile"
+  environment         = var.environment
+  rolename            = var.rolename
+  instanceprofilename = var.instanceprofilename
 }
